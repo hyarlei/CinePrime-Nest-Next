@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  pg_database:
+    container_name: cineprime_pg_database
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: cineprime
+      POSTGRES_PASSWORD: cineprime
+      POSTGRES_DB: cineprime_db
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  nestjs:
+    build: ./nestjs
+    ports:
+      - 3000:3000
+      - 5555:5555
+    volumes:
+      - ./nestjs:/home/node/app
+
+  nextjs:
+    build: ./nextjs
+    ports:
+      - 3001:3000
+    volumes:
+      - ./nextjs:/home/node/app
