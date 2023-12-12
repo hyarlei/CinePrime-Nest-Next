@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProfileType {
+  employee
+  client
+}
+
+model User {
+  id       Int         @id @default(autoincrement())
+  nome     String?
+  cpf      String      @unique
+  telefone String?
+  email    String      @unique
+  password String
+  isAdmin  Boolean     @default(false)
+  profile  ProfileType @default(client)
+  //carrinhos Carrinho[]
+  //Reserva   Reserva[]
+  tickets  Ticket[]
+}
+
+model Movie {
+  id             Int       @id @default(autoincrement())
+  name           String
+  genre          String
+  duration       Int
+  classification String
+  synopsis       String
+  sessions       Session[]
+}
+
+model Room {
+  id                     Int       @id @default(autoincrement())
+  qtd_max                Int
+  typeExhibitionAccepted String
+  sessions               Session[]
+}
+
+model Session {
+  id              Int      @id @default(autoincrement())
+  dateTime        DateTime
+  idRoom          Int
+  idMovie         Int
+  exibitionType   String
+  dublingType     String
+  atualTicketsQtd Int
+  maxTicketsQtd   Int
+  tickets         Ticket[]
+  room            Room     @relation(fields: [idRoom], references: [id], onDelete: Cascade)
+  movie           Movie    @relation(fields: [idMovie], references: [id], onDelete: Cascade)
+
+  @@index([idRoom])
+  @@index([idMovie])
+}
+
+model Ticket {
+  id        Int     @id @default(autoincrement())
+  idUser    Int
+  idSession Int
+  type      String
+  session   Session @relation(fields: [idSession], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [idUser], references: [id], onDelete: Cascade)
+
+  @@index([idSession])
+  @@index([idUser])
+}
