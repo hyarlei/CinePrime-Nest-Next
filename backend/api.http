@@ -1,0 +1,31 @@
+GET http://localhost:3000/users
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+	"nome": "Hyarlei",
+	"cpf": "10200092332",
+	"telefone": "85996018321"	,
+	"email": "hyarleysf@gmail.com",
+	"password": "123"
+}	
+
+###
+GET http://localhost:3000/users/1
+
+###
+PATCH http://localhost:3000/users/1
+Content-Type: application/json
+
+{
+	"nome": "Hyarlei Silva",
+	"cpf": "10200092332",
+	"telefone": "8599601-8321"	,
+	"email": "hyarleysf@gmail.com",
+	"password": "123"
+}	
+
+###
+DELETE http://localhost:3000/users/1
