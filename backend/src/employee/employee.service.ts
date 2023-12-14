@@ -1,26 +1,53 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { PrismaService } from 'src/database/prisma.service';
+import { CreateEmployeeDto } from './dto/create-employeedto';
+import { FindAllEmployeeDto } from './dto/findAll-employeeDto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeeValidationService } from './validation/validateEmployee.service';
 
 @Injectable()
 export class EmployeeService {
-  create(createEmployeeDto: CreateEmployeeDto) {
-    return 'This action adds a new employee';
+  constructor(
+    private prisma: PrismaService,
+    private employeeValidationService: EmployeeValidationService,
+  ) {}
+
+  async create(createEmployeeDto: CreateEmployeeDto) {
+    const validationError = await this.employeeValidationService.validateUserFields(createEmployeeDto);
+
+    if(validationError) {
+      return { error: validationError };
+    }
+
+    try {
+      const createdEmployee = await this.employeeValidationService.execute(createEmployeeDto);
+
+      return { employee: createdEmployee };
+    } catch (error) {
+      return { error: 'Erro interno ao criar o funcionário' };
+    }
   }
 
-  findAll() {
-    return `This action returns all employee`;
+  async findAll(findEmployeeDto: FindAllEmployeeDto) {
+    return this.prisma.user.findMany(findEmployeeDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employee`;
+  async findOne(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${id} employee`;
+  async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
+    return this.prisma.user.update({
+      where: { id },
+      data: updateEmployeeDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} employee`;
+  async remove(id: number) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
   }
 }

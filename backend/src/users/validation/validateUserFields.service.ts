@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { CreateUserDto } from '../dto/create-user.dto';
+import { CreateUserDto } from '../dto/create-userDto';
 
 @Injectable()
 export class UsersValidationService {
@@ -106,7 +106,6 @@ export class UsersValidationService {
           },
         });
 
-        //tem algum return aqui? Não sei se é null
         return 'Usuário criado com sucesso!';
       }
     } catch (error: any) {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { FindAllUserDto } from './dto/findAll-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-userDto';
+import { FindAllUserDto } from './dto/findAll-userDto';
+import { UpdateUserDto } from './dto/update-userDto';
 import { UsersValidationService } from './validation/validateUserFields.service';
 
 @Injectable()
@@ -22,30 +22,40 @@ export class UsersService {
     try {
       const createdUser = await this.usersValidationService.execute(createUserDto);
 
-      return { user: createdUser };
+      return { user: createdUser, MessageChannel: 'Usuário criado com sucesso' };
     } catch (error) {
       return { error: 'Erro interno ao criar o usuário' };
     }
   }
 
-  findAll(findUserDto: FindAllUserDto) {
+  async findAll(findUserDto: FindAllUserDto) {
     return this.prisma.user.findMany(findUserDto);
   }
 
-  findOne(id: number) {
-    return this.prisma.user.findUnique({
-      where: { id },
-      });
+  async findOne(emailOrId: string | number ) {
+    if (typeof emailOrId === 'number') {
+      // Lógica para buscar por id
+      return this.prisma.user.findUnique({
+        where: { id: emailOrId },
+        });
+    } else if (typeof emailOrId === 'string') {
+      // Lógica para buscar por email
+      return this.prisma.user.findUnique({
+        where: { email: emailOrId },
+        });
+    } else {
+      throw new Error('Tipo de parâmetro inválido');
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     return this.prisma.user.update({
       where: { id },
       data: updateUserDto,
       });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.prisma.user.delete({
       where: { id },
       });
