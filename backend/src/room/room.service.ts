@@ -1,26 +1,54 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { RoomValidationService } from './validation/validateRoomField.service';
 
 @Injectable()
 export class RoomService {
-  create(createRoomDto: CreateRoomDto) {
-    return 'This action adds a new room';
+  constructor(
+    private prisma: PrismaService,
+    private roomValidationService: RoomValidationService,
+    ) { }
+
+  async create(createRoomDto: CreateRoomDto) {
+    try {
+      const result = await this.roomValidationService.execute(createRoomDto);
+
+      if (typeof result === 'string') {
+        return { message: result };
+      }
+
+      if (result.error) {
+        return { error: result.error };
+      }
+
+      return { room: result, message: 'Sala criada com sucesso' };
+    } catch (error) {
+      return { error: 'Erro interno ao criar a sala' };
+    }
   }
 
-  findAll() {
-    return `This action returns all room`;
+  async findAll() {
+    return this.prisma.room.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} room`;
+  async findOne(id: number) {
+    return this.prisma.room.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateRoomDto: UpdateRoomDto) {
-    return `This action updates a #${id} room`;
+  async update(id: number, updateRoomDto: UpdateRoomDto) {
+    return this.prisma.room.update({
+      where: { id },
+      data: updateRoomDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} room`;
+  async remove(id: number) {
+    return this.prisma.room.delete({
+      where: { id },
+    });
   }
 }
