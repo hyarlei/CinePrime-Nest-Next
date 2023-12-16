@@ -1,8 +1,7 @@
 import { Prisma } from "@prisma/client";
 
-export class FindAllRoomDto implements Prisma.RoomFindManyArgs {
-    select?: Prisma.RoomSelect;
-    where?: Prisma.RoomWhereInput;
+export class FindAllTicketDto implements Prisma.TicketFindManyArgs {
+    select?: Prisma.TicketSelect;
     orderBy?: Prisma.RoomOrderByWithRelationInput;
     skip?: number;
     take?: number;

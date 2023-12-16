@@ -29,3 +29,159 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:3000/users/1
+
+###-----------Login--------------###
+
+GET  http://localhost:3000/auth/login
+
+###
+GET  http://localhost:3000/auth/profile
+
+###-----------Cadastro-------------###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+	"nome": "Hyarlei",
+	"cpf": "10200092332",
+	"telefone": "85996018321"	,
+	"email": "hyarleysf@gmail.com",
+	"password": "123"
+}	
+
+###
+GET http://localhost:3000/users/1
+
+###
+PATCH http://localhost:3000/users/1
+Content-Type: application/json
+
+{
+	"nome": "Hyarlei Silva",
+	"cpf": "10200092332",
+	"telefone": "8599601-8321"	,
+	"email": "hyarleysf@gmail.com",
+	"password": "123"
+}	
+
+###
+DELETE http://localhost:3000/users/1
+
+###-----------Employee-------------###
+
+POST http://localhost:3000/employee
+Content-Type: application/json
+
+{
+	"nome": "Hyarlei",
+	"cpf": "10200092332",
+	"telefone": "(85) 99601-8321",
+	"email": "hyarleysf@gmail.com",
+	"password": "123"
+}
+
+###
+GET http://localhost:3000/employee/1
+
+###
+PATCH http://localhost:3000/employee/1
+Content-Type: application/json
+
+{
+	"nome": "João",
+	"cpf": "10200092332",
+	"telefone": "8599601-8321"	,
+	"email": "joao@gmail.com",
+	"password": "123"
+}	
+
+###
+DELETE http://localhost:3000/employee/1
+
+###-----------Movie-------------###
+
+POST http://localhost:3000/movie
+Content-Type: application/json
+
+{
+  "name": "Até o último homem",
+  "genre": "Guerra",
+  "duration": 139,
+  "classification": "16",
+  "synopsis": "Shuashua"
+}
+
+###
+GET http://localhost:3000/movie/1
+
+###
+PATCH http://localhost:3000/movie/1
+Content-Type: application/json
+
+{
+  "name": "Jonh Wick",
+  "genre": "Ação",
+  "duration": 140,
+  "classification": "16",
+  "synopsis": "fbhbhubd"
+}
+
+###
+DELETE http://localhost:3000/movie/1
+
+###-----------Room-------------###
+
+POST http://localhost:3000/room
+Content-Type: application/json
+
+{
+	"qtd_max": 4,
+	"typeExhibitionAccepted": "2D"
+}
+
+###
+GET http://localhost:3000/room/1
+
+###
+PATCH http://localhost:3000/room/1
+Content-Type: application/json
+
+{
+	"qtd_max": 5,
+	"typeExhibitionAccepted": "3D"
+}
+
+###
+DELETE http://localhost:3000/room/1
+
+###-----------Session-------------###
+
+POST http://localhost:3000/session
+Content-Type: application/jsonm
+
+{
+	"dateTime": "2023-02-16T16:00:00Z",
+  "idRoom": 1,
+  "idMovie": 1,
+  "exibitionType": "2D",
+  "dublingType": "Dublado",
+  "atualTicketsQtd": 50,
+  "maxTicketsQtd": 50
+}
+
+###
+GET http://localhost:3000/session/1
+
+###
+PATCH http://localhost:3000/session/1
+Content-Type: application/json
+
+{
+	"qtd_max": 5,
+	"typeExhibitionAccepted": "3D"
+}
+
+###
+DELETE http://localhost:3000/session/1
+

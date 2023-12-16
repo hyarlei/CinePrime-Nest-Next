@@ -1,26 +1,53 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { TicketValidationService } from './validation/validateTicketField.service';
 
 @Injectable()
 export class TicketService {
-  create(createTicketDto: CreateTicketDto) {
-    return 'This action adds a new ticket';
+  constructor(private prisma: PrismaService,
+    private ticketValidationService: TicketValidationService,
+    ) {}
+
+  async create(createTicketDto: CreateTicketDto) {
+    try {
+      const result = await this.ticketValidationService.execute(createTicketDto)
+
+      if (typeof result === 'string') {
+        return { message: result};
+      }
+
+      if (result.error) {
+        return { error: result.error };
+      }
+
+      return { ticket: result, message: 'Ticket criado com sucesso!' };
+    } catch (error) {
+      return { error: 'Erro interno ao criar o ticket' };
+    }
   }
 
-  findAll() {
-    return `This action returns all ticket`;
+  async findAll() {
+    return this.prisma.ticket.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ticket`;
+  async findOne(id: number) {
+    return this.prisma.ticket.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateTicketDto: UpdateTicketDto) {
-    return `This action updates a #${id} ticket`;
+  async update(id: number, updateTicketDto: UpdateTicketDto) {
+    return this.prisma.ticket.update({
+      where: { id },
+      data: updateTicketDto
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ticket`;
+  async remove(id: number) {
+    return this.prisma.ticket.delete({
+      where: { id },
+    });
   }
 }

@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateTicketDto } from './create-ticket.dto';
+import { Prisma } from '@prisma/client';
 
-export class UpdateTicketDto extends PartialType(CreateTicketDto) {}
+export class UpdateTicketDto implements Prisma.TicketUpdateInput {
+    idUser?: number;
+    idSession?: number;
+    type?: string;
+}
