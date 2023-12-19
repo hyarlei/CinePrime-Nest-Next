@@ -68,6 +68,7 @@ model Ticket {
   idUser    Int
   idSession Int
   type      String
+  price     Float   @default(0.0)
   session   Session @relation(fields: [idSession], references: [id], onDelete: Cascade)
   user      User    @relation(fields: [idUser], references: [id], onDelete: Cascade)
 

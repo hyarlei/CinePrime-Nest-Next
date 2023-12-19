@@ -4,9 +4,10 @@ import { CreateTicketDto } from '../dto/create-ticket.dto';
 
 @Injectable()
 export class TicketValidationService {
-    constructor(
-        private prisma: PrismaService,
-    ) { }
+    private readonly FULL_PRICE = 21.00;
+    private readonly HALF_PRICE = 11.20;
+
+    constructor(private prisma: PrismaService) {}
 
     async validateTicketField(ticket: CreateTicketDto): Promise<string | null> {
         const { idUser, idSession, type } = ticket;
@@ -14,6 +15,7 @@ export class TicketValidationService {
         if (!idUser || !idSession || !type) {
             return 'Preencha todos os campos';
         }
+
         const [sessionExists, userExists] = await Promise.all([
             this.prisma.session.findUnique({
                 where: { id: idSession },
@@ -47,15 +49,19 @@ export class TicketValidationService {
         }
 
         try {
-            await this.prisma.ticket.create({
+            const ticketType = type === 'Meia' ? 'Meia' : 'Inteira';
+            const ticketPrice = type === 'Meia' ? this.HALF_PRICE : this.FULL_PRICE;
+
+            const createdTicket = await this.prisma.ticket.create({
                 data: {
                     idUser,
                     idSession,
-                    type
-                }
+                    type: ticketType,
+                    price: ticketPrice,
+                },
             });
 
-            const [sessionExists] = await Promise.all([
+            await Promise.all([
                 this.prisma.session.findUnique({
                     where: { id: idSession },
                 }),
@@ -64,11 +70,20 @@ export class TicketValidationService {
             await this.prisma.session.update({
                 where: { id: idSession },
                 data: {
-                    atualTicketsQtd: sessionExists.atualTicketsQtd + 1,
+                    atualTicketsQtd: {
+                        increment: 1,
+                    },
                 },
-            })
+            });
 
-
+            await this.prisma.user.update({
+                where: { id: idUser },
+                data: {
+                    tickets: {
+                        connect: { id: createdTicket.id },
+                    },
+                },
+            });
 
             return 'Ticket criado com sucesso!';
         } catch (error) {
